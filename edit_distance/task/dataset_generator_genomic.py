@@ -4,6 +4,7 @@ import pickle
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 from util.bioinformatics_algorithms.edit_distance import cross_distance_matrix_threads
 from util.data_handling.string_generator import string_to_list
@@ -55,7 +56,8 @@ if __name__ == '__main__':
     # load and divide sequences
     with open(args.source_sequences, 'rb') as f:
         L = f.readlines()
-    L = [l[:-1].decode('UTF-8') for l in L]
+    L = [l[:-1].decode('utf-8-sig').replace("\r", "") for l in L]
+    random.shuffle(L)
 
     strings = {
         'train': L[:args.train_size],

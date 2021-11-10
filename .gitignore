@@ -1,2 +1,12 @@
 .idea/*
 data/*
+venv/*
+__pycache__
+*.pyc
+*.pkl
+*.html
+*.c
+*.pyd
+*.exp
+*.lib
+*.obj
