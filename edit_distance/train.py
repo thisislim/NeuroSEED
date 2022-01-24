@@ -4,6 +4,7 @@ import pickle
 import sys
 import time
 from types import SimpleNamespace
+from matplotlib import pyplot as plt
 
 import numpy as np
 import torch
@@ -265,7 +266,7 @@ def test_and_plot(model, loader, loss, device, dataset):
     outputs = np.concatenate(output_list, axis=0)
     labels = np.concatenate(labels_list, axis=0)
     pickle.dump((outputs, labels), open(dataset + ".pkl", "wb"))
-    # plt.plot(outputs, labels, 'o', color='black')
-    # plt.show()
+    plt.plot(outputs, labels, 'o', color='black')
+    plt.show()
 
     return avg_loss.avg
