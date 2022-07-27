@@ -5,11 +5,13 @@ import sys
 import time
 from types import SimpleNamespace
 from matplotlib import pyplot as plt
+from scipy.stats import pearsonr
 
 import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn as nn
+
 from closest_string.test import closest_string_testing
 from edit_distance.task.dataset import EditDistanceDatasetSampled, EditDistanceDatasetComplete
 from edit_distance.models.hyperbolics import RAdam
@@ -38,7 +40,7 @@ def general_arg_parser():
     parser.add_argument('--distance', type=str, default='hyperbolic', help='Type of distance to use')
     parser.add_argument('--workers', type=int, default=0, help='Number of workers')
     parser.add_argument('--loss', type=str, default="mse", help='Loss function to use (mse, mape or mae)')
-    parser.add_argument('--plot', action='store_true', default=False, help='Plot real vs predicted distances')
+    parser.add_argument('--plot', default=True, help='Plot real vs predicted distances')
     parser.add_argument('--closest_data_path', type=str, default='', help='Dataset for closest string retrieval tests')
     parser.add_argument('--hierarchical_data_path', type=str, default='', help='Dataset for hierarchical clustering')
     parser.add_argument('--construct_msa_tree', type=str, default='False', help='Whether to construct NJ tree testset')
@@ -265,8 +267,12 @@ def test_and_plot(model, loader, loss, device, dataset):
     # save real and predicted distances for offline plotting
     outputs = np.concatenate(output_list, axis=0)
     labels = np.concatenate(labels_list, axis=0)
+    corr_coeff, _ = pearsonr(outputs, labels)
+
     pickle.dump((outputs, labels), open(dataset + ".pkl", "wb"))
-    plt.plot(outputs, labels, 'o', color='black')
+    plt.plot(labels, outputs, 'o', color='blue')
+    plt.xlabel(f"R={corr_coeff}")
     plt.show()
+    plt.savefig(f'./distances/{dataset}.png')
 
     return avg_loss.avg

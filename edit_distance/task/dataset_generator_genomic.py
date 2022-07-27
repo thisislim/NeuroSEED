@@ -51,12 +51,20 @@ if __name__ == '__main__':
     parser.add_argument('--val_size', type=int, default=700, help='Validation sequences')
     parser.add_argument('--test_size', type=int, default=1500, help='Test sequences')
     parser.add_argument('--source_sequences', type=str, default='./data/qiita.txt', help='Sequences data path')
+    parser.add_argument('--pos', type=int, default=None, help='sequence crop start position')
+    parser.add_argument('--crop', type=int, default=None, help='sequence crop length')
     args = parser.parse_args()
 
     # load and divide sequences
     with open(args.source_sequences, 'rb') as f:
         L = f.readlines()
-    L = [l[:-1].decode('utf-8-sig').replace("\r", "") for l in L]
+    
+    if args.pos is None and args.crop is None:
+        L = [l.decode('utf-8-sig').replace("\r\n", "") for l in L]
+    elif args.pos is not None and args.crop is not None:
+        L = [l.decode('utf-8-sig').replace("\r\n", "")[args.pos : args.pos+args.crop] for l in L]
+    else:
+        raise Exception('--pos and --crop should have same type')
     random.shuffle(L)
 
     strings = {

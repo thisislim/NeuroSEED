@@ -10,3 +10,4 @@ __pycache__
 *.exp
 *.lib
 *.obj
+*.png
